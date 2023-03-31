@@ -22,22 +22,22 @@ func init() {
 	lg = logging.MustGetLogger("log")
 }
 
-//ErrorDisconnected is returned when operations are attempted after Disconnect()
-//is called.
+// ErrorDisconnected is returned when operations are attempted after Disconnect()
+// is called.
 var ErrorDisconnected = &CodedError{&pb.Status{Code: 421, Msg: "Driver is disconnected"}}
 
-//ErrorClusterDegraded is returned when a write operation on an unmapped UUID is attempted.
-//generally the same operation will succeed if attempted once the cluster has recovered.
+// ErrorClusterDegraded is returned when a write operation on an unmapped UUID is attempted.
+// generally the same operation will succeed if attempted once the cluster has recovered.
 var ErrorClusterDegraded = &CodedError{&pb.Status{Code: 419, Msg: "Cluster is degraded"}}
 
-//ErrorWrongArgs is returned from API functions if the parameters are nonsensical
+// ErrorWrongArgs is returned from API functions if the parameters are nonsensical
 var ErrorWrongArgs = &CodedError{&pb.Status{Code: 421, Msg: "Invalid Arguments"}}
 
 //ErrorNoSuchStream is returned if an operation is attempted on a stream when
 //it does not exist.
 //var ErrorNoSuchStream = &CodedError{&pb.Status{Code: 404, Msg: "No such stream"}}
 
-//BTrDB is the main object you should use to interact with BTrDB.
+// BTrDB is the main object you should use to interact with BTrDB.
 type BTrDB struct {
 	//This covers the mash
 	mashwmu    sync.Mutex
@@ -66,8 +66,8 @@ func newBTrDB() *BTrDB {
 	return &BTrDB{epcache: make(map[uint32]*Endpoint)}
 }
 
-//StatPoint represents a statistical summary of a window. The length of that
-//window must be determined from context (e.g the parameters passed to AlignedWindow or Window methods)
+// StatPoint represents a statistical summary of a window. The length of that
+// window must be determined from context (e.g the parameters passed to AlignedWindow or Window methods)
 type StatPoint struct {
 	//The time of the start of the window, in nanoseconds since the epoch UTC
 	Time   int64
@@ -78,18 +78,18 @@ type StatPoint struct {
 	StdDev float64
 }
 
-//Connect takes a list of endpoints and returns a BTrDB handle.
-//Note that only a single endpoint is technically required, but having
-//more endpoints will make the initial connection more robust to cluster
-//changes. Different addresses for the same endpoint are permitted
+// Connect takes a list of endpoints and returns a BTrDB handle.
+// Note that only a single endpoint is technically required, but having
+// more endpoints will make the initial connection more robust to cluster
+// changes. Different addresses for the same endpoint are permitted
 func Connect(ctx context.Context, endpoints ...string) (*BTrDB, error) {
 	return ConnectAuth(ctx, "", endpoints...)
 }
 
-//ConnectAuth takes an API key and a list of endpoints and returns a BTrDB handle.
-//Note that only a single endpoint is technically required, but having
-//more endpoints will make the initial connection more robust to cluster
-//changes. Different addresses for the same endpoint are permitted
+// ConnectAuth takes an API key and a list of endpoints and returns a BTrDB handle.
+// Note that only a single endpoint is technically required, but having
+// more endpoints will make the initial connection more robust to cluster
+// changes. Different addresses for the same endpoint are permitted
 func ConnectAuth(ctx context.Context, apikey string, endpoints ...string) (*BTrDB, error) {
 	if len(endpoints) == 0 {
 		return nil, fmt.Errorf("No endpoints provided")
@@ -127,8 +127,8 @@ func ConnectAuth(ctx context.Context, apikey string, endpoints ...string) (*BTrD
 	return b, nil
 }
 
-//Disconnect will close all active connections to the cluster. All future calls
-//will return ErrorDisconnected
+// Disconnect will close all active connections to the cluster. All future calls
+// will return ErrorDisconnected
 func (b *BTrDB) Disconnect() error {
 	b.epmu.Lock()
 	defer b.epmu.Unlock()
@@ -143,8 +143,8 @@ func (b *BTrDB) Disconnect() error {
 	return gerr
 }
 
-//EndpointForHash is a low level function that returns a single endpoint for an
-//endpoint hash.
+// EndpointForHash is a low level function that returns a single endpoint for an
+// endpoint hash.
 func (b *BTrDB) EndpointForHash(ctx context.Context, hash uint32) (*Endpoint, error) {
 	if ctx.Err() != nil {
 		return nil, ctx.Err()
@@ -176,13 +176,13 @@ func (b *BTrDB) EndpointForHash(ctx context.Context, hash uint32) (*Endpoint, er
 	return nep, nil
 }
 
-//ReadEndpointFor returns the endpoint that should be used to read the given uuid
+// ReadEndpointFor returns the endpoint that should be used to read the given uuid
 func (b *BTrDB) ReadEndpointFor(ctx context.Context, uuid uuid.UUID) (*Endpoint, error) {
 	//TODO do rpref
 	return b.EndpointFor(ctx, uuid)
 }
 
-//EndpointFor returns the endpoint that should be used to write the given uuid
+// EndpointFor returns the endpoint that should be used to write the given uuid
 func (b *BTrDB) EndpointFor(ctx context.Context, uuid uuid.UUID) (*Endpoint, error) {
 	if ctx.Err() != nil {
 		return nil, ctx.Err()
@@ -329,8 +329,8 @@ func (b *BTrDB) resyncInternalMash() {
 	lg.Warningf("failed to resync MASH, is BTrDB unavailable?")
 }
 
-//This returns true if you should redo your operation (and get new ep)
-//and false if you should return the last value/error you got
+// This returns true if you should redo your operation (and get new ep)
+// and false if you should return the last value/error you got
 func (b *BTrDB) TestEpError(ep *Endpoint, err error) bool {
 	startNumResyncs := atomic.LoadInt64(&b.numResyncs)
 	if ep == nil && err == nil {
@@ -382,9 +382,9 @@ func (b *BTrDB) TestEpError(ep *Endpoint, err error) bool {
 	return false
 }
 
-//This should invalidate the endpoint if some kind of error occurs.
-//Because some values may have already been delivered, async functions using
-//snoopEpErr will not be able to mask cluster errors from the user
+// This should invalidate the endpoint if some kind of error occurs.
+// Because some values may have already been delivered, async functions using
+// snoopEpErr will not be able to mask cluster errors from the user
 func (b *BTrDB) SnoopEpErr(ep *Endpoint, err chan error) chan error {
 	rv := make(chan error, 2)
 	go func() {
@@ -398,28 +398,28 @@ func (b *BTrDB) SnoopEpErr(ep *Endpoint, err chan error) chan error {
 	return rv
 }
 
-//Subscriptions represent a set of
-//real time subscriptions to streaming data.
+// Subscriptions represent a set of
+// real time subscriptions to streaming data.
 type Subscriptions struct {
 	err chan error
 	id  []uuid.UUID
 	c   chan SubRecord
 }
 
-//Data for a single stream returned from a Subscription.
+// Data for a single stream returned from a Subscription.
 type SubRecord struct {
 	ID  uuid.UUID
 	Val []RawPoint
 }
 
-//An endpoint and its associated uuids.
+// An endpoint and its associated uuids.
 type EPGroup struct {
 	*Endpoint
 	ID []uuid.UUID
 }
 
-//EndpointSplit takes a variadic list of uuids and organizes them by the endpoint
-//responsible for them.
+// EndpointSplit takes a variadic list of uuids and organizes them by the endpoint
+// responsible for them.
 func (b *BTrDB) EndpointsSplit(ctx context.Context, id ...uuid.UUID) ([]EPGroup, error) {
 	var err error
 	var ep *Endpoint
@@ -460,10 +460,10 @@ func (b *BTrDB) EndpointsSplit(ctx context.Context, id ...uuid.UUID) ([]EPGroup,
 	return out, nil
 }
 
-//Subscribe takes a list of stream UUIDs to receive real time data points from.
-//Connections are made to each relevant endpoints, and streams that belong to the
-//same endpoint use the same connection. Data points are "raw", meaning they
-//are given in the exact same sequence the database received them from the client.
+// Subscribe takes a list of stream UUIDs to receive real time data points from.
+// Connections are made to each relevant endpoints, and streams that belong to the
+// same endpoint use the same connection. Data points are "raw", meaning they
+// are given in the exact same sequence the database received them from the client.
 func (b *BTrDB) Subscribe(ctx context.Context, id ...uuid.UUID) (*Subscriptions, error) {
 	if len(id) == 0 {
 		return nil, fmt.Errorf("no ids provided")
@@ -484,8 +484,8 @@ func (b *BTrDB) Subscribe(ctx context.Context, id ...uuid.UUID) (*Subscriptions,
 	return subs, nil
 }
 
-//Next gives either the most recent data for the set of subscriptions
-//or an error regarding the connection state.
+// Next gives either the most recent data for the set of subscriptions
+// or an error regarding the connection state.
 func (subs *Subscriptions) Next(ctx context.Context) (sr SubRecord, err error) {
 	select {
 	case <-ctx.Done():

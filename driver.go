@@ -19,22 +19,22 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
-//PropertyVersion is the version of a stream annotations and tags. It begins at 1
-//for a newly created stream and increases by 1 for each SetStreamAnnotation
-//or SetStreamTags call. An PropertyVersion of 0 means "any version"
+// PropertyVersion is the version of a stream annotations and tags. It begins at 1
+// for a newly created stream and increases by 1 for each SetStreamAnnotation
+// or SetStreamTags call. An PropertyVersion of 0 means "any version"
 type PropertyVersion uint64
 
-//How long we try to connect to an endpoint before trying the next one
+// How long we try to connect to an endpoint before trying the next one
 const EndpointTimeout = 5 * time.Second
 
-//Endpoint is a low level connection to a single server. Rather use
-//BTrDB which manages creating and destroying Endpoint objects as required
+// Endpoint is a low level connection to a single server. Rather use
+// BTrDB which manages creating and destroying Endpoint objects as required
 type Endpoint struct {
 	g    pb.BTrDBClient
 	conn *grpc.ClientConn
 }
 
-//RawPoint represents a single timestamped value
+// RawPoint represents a single timestamped value
 type RawPoint struct {
 	//Nanoseconds since the epoch
 	Time int64
@@ -42,7 +42,7 @@ type RawPoint struct {
 	Value float64
 }
 
-//RawPoint represents a single timestamped value
+// RawPoint represents a single timestamped value
 type RawPointVec struct {
 	//Nanoseconds since the epoch
 	Time int64
@@ -78,20 +78,20 @@ func (a apikeyCred) RequireTransportSecurity() bool {
 	return false
 }
 
-//ConnectEndpoint is a low level call that connects to a single BTrDB
-//server. It takes multiple arguments, but it is assumed that they are
-//all different addresses for the same server, in decreasing order of
-//priority. It returns a Endpoint, which is generally never used directly.
-//Rather use Connect()
+// ConnectEndpoint is a low level call that connects to a single BTrDB
+// server. It takes multiple arguments, but it is assumed that they are
+// all different addresses for the same server, in decreasing order of
+// priority. It returns a Endpoint, which is generally never used directly.
+// Rather use Connect()
 func ConnectEndpoint(ctx context.Context, addresses ...string) (*Endpoint, error) {
 	return ConnectEndpointAuth(ctx, "", addresses...)
 }
 
-//ConnectEndpointAuth is a low level call that connects to a single BTrDB
-//server. It takes multiple arguments, but it is assumed that they are
-//all different addresses for the same server, in decreasing order of
-//priority. It returns a Endpoint, which is generally never used directly.
-//Rather use ConnectAuthenticated()
+// ConnectEndpointAuth is a low level call that connects to a single BTrDB
+// server. It takes multiple arguments, but it is assumed that they are
+// all different addresses for the same server, in decreasing order of
+// priority. It returns a Endpoint, which is generally never used directly.
+// Rather use ConnectAuthenticated()
 func ConnectEndpointAuth(ctx context.Context, apikey string, addresses ...string) (*Endpoint, error) {
 	if len(addresses) == 0 {
 		return nil, fmt.Errorf("No addresses provided")
@@ -170,7 +170,7 @@ func ConnectEndpointAuth(ctx context.Context, apikey string, addresses ...string
 	return nil, fmt.Errorf("Endpoint is unreachable on all addresses")
 }
 
-//GetGRPC will return the underlying GRPC client object.
+// GetGRPC will return the underlying GRPC client object.
 func (b *Endpoint) GetGRPC() pb.BTrDBClient {
 	return b.g
 }
@@ -179,60 +179,15 @@ func (b *Endpoint) GetClientConnection() *grpc.ClientConn {
 	return b.conn
 }
 
-//Disconnect will close the underlying GRPC connection. The endpoint cannot be used
-//after calling this method.
+// Disconnect will close the underlying GRPC connection. The endpoint cannot be used
+// after calling this method.
 func (b *Endpoint) Disconnect() error {
 	return b.conn.Close()
 }
 
-func (b *Endpoint) InsertGeneric(ctx context.Context, uu uuid.UUID, values []*pb.RawPoint, p *InsertParams) error {
-	policy := pb.MergePolicy_NEVER
-	rounding := (*pb.RoundSpec)(nil)
-	if p != nil {
-		if p.RoundBits != nil {
-			rounding = &pb.RoundSpec{
-				Spec: &pb.RoundSpec_Bits{Bits: int32(*p.RoundBits)},
-			}
-		}
-		switch p.MergePolicy {
-		case MPNever:
-			policy = pb.MergePolicy_NEVER
-		case MPEqual:
-			policy = pb.MergePolicy_EQUAL
-		case MPRetain:
-			policy = pb.MergePolicy_RETAIN
-		case MPReplace:
-			policy = pb.MergePolicy_REPLACE
-		}
-	}
-	rv, err := b.g.Insert(ctx, &pb.InsertParams{
-		Uuid:        uu,
-		Sync:        false,
-		Values:      values,
-		MergePolicy: policy,
-		Rounding:    rounding,
-	})
-	if err != nil {
-		return err
-	}
-	if rv.GetStat() != nil {
-		return &CodedError{rv.GetStat()}
-	}
-	return nil
-}
-
-func (b *Endpoint) InsertUnique(ctx context.Context, uu uuid.UUID, values []*pb.RawPoint, mp MergePolicy) error {
-	return b.InsertGeneric(ctx, uu, values, &InsertParams{MergePolicy: mp})
-}
-
-//Insert is a low level function, rather use Stream.Insert()
-func (b *Endpoint) Insert(ctx context.Context, uu uuid.UUID, values []*pb.RawPoint, p *InsertParams) error {
-	return b.InsertGeneric(ctx, uu, values, p)
-}
-
-//FaultInject is a debugging function that allows specific low level control of the endpoint.
-//If you have to read the documentation, this is not for you. Server must be started with
-//$BTRDB_ENABLE_FAULT_INJECT=YES
+// FaultInject is a debugging function that allows specific low level control of the endpoint.
+// If you have to read the documentation, this is not for you. Server must be started with
+// $BTRDB_ENABLE_FAULT_INJECT=YES
 func (b *Endpoint) FaultInject(ctx context.Context, typ uint64, args []byte) ([]byte, error) {
 	rv, err := b.g.FaultInject(ctx, &pb.FaultInjectParams{
 		Type:   typ,
@@ -247,7 +202,7 @@ func (b *Endpoint) FaultInject(ctx context.Context, typ uint64, args []byte) ([]
 	return rv.Rv, nil
 }
 
-//Create is a low level function, rather use BTrDB.Create()
+// Create is a low level function, rather use BTrDB.Create()
 func (b *Endpoint) Create(ctx context.Context, uu uuid.UUID, collection string, tags map[string]*string, annotations map[string]*string) error {
 	taglist := []*pb.KeyOptValue{}
 	for k, v := range tags {
@@ -280,13 +235,13 @@ func (b *Endpoint) Create(ctx context.Context, uu uuid.UUID, collection string, 
 	return nil
 }
 
-//ListAllCollections is a low level function, and in particular will only work
-//with small numbers of collections. Rather use BTrDB.ListAllCollections()
+// ListAllCollections is a low level function, and in particular will only work
+// with small numbers of collections. Rather use BTrDB.ListAllCollections()
 func (b *Endpoint) ListAllCollections(ctx context.Context) (chan string, chan error) {
 	return b.ListCollections(ctx, "")
 }
 
-//StreamInfo is a low level function, rather use Stream.Annotation()
+// StreamInfo is a low level function, rather use Stream.Annotation()
 func (b *Endpoint) StreamInfo(ctx context.Context, uu uuid.UUID, omitDescriptor bool, omitVersion bool) (
 	collection string,
 	pver PropertyVersion,
@@ -328,7 +283,7 @@ func (b *Endpoint) StreamInfo(ctx context.Context, uu uuid.UUID, omitDescriptor 
 	return collection, pver, tags, anns, rv.VersionMajor, nil
 }
 
-//SetStreamAnnotation is a low level function, rather use Stream.SetAnnotation() or Stream.CompareAndSetAnnotation()
+// SetStreamAnnotation is a low level function, rather use Stream.SetAnnotation() or Stream.CompareAndSetAnnotation()
 func (b *Endpoint) SetStreamAnnotations(ctx context.Context, uu uuid.UUID, expected PropertyVersion, changes map[string]*string, remove []string) error {
 	ch := []*pb.KeyOptValue{}
 	for k, v := range changes {
@@ -350,7 +305,7 @@ func (b *Endpoint) SetStreamAnnotations(ctx context.Context, uu uuid.UUID, expec
 	return nil
 }
 
-//SetStreamTags is a low level function, rather use Stream.SetTags()
+// SetStreamTags is a low level function, rather use Stream.SetTags()
 func (b *Endpoint) SetStreamTags(ctx context.Context, uu uuid.UUID, expected PropertyVersion, collection string, changes map[string]*string) error {
 	ch := []*pb.KeyOptValue{}
 	for k, v := range changes {
@@ -370,7 +325,7 @@ func (b *Endpoint) SetStreamTags(ctx context.Context, uu uuid.UUID, expected Pro
 	return nil
 }
 
-//GetMetadataUsage is a low level function. Rather use BTrDB.GetMetadataUsage
+// GetMetadataUsage is a low level function. Rather use BTrDB.GetMetadataUsage
 func (b *Endpoint) GetMetadataUsage(ctx context.Context, prefix string) (tags map[string]int, annotations map[string]int, err error) {
 	rv, err := b.g.GetMetadataUsage(ctx, &pb.MetadataUsageParams{
 		Prefix: prefix,
@@ -392,7 +347,7 @@ func (b *Endpoint) GetMetadataUsage(ctx context.Context, prefix string) (tags ma
 	return tags, annotations, nil
 }
 
-//ListCollections is a low level function, and in particular has complex constraints. Rather use BTrDB.ListCollections()
+// ListCollections is a low level function, and in particular has complex constraints. Rather use BTrDB.ListCollections()
 func (b *Endpoint) ListCollections(ctx context.Context, prefix string) (chan string, chan error) {
 	rv, err := b.g.ListCollections(ctx, &pb.ListCollectionsParams{
 		Prefix: prefix,
@@ -464,7 +419,7 @@ func streamFromLookupResult(lr *pb.StreamDescriptor, b *BTrDB) *Stream {
 	return rv
 }
 
-//LookupStreams is a low level function, rather use BTrDB.LookupStreams()
+// LookupStreams is a low level function, rather use BTrDB.LookupStreams()
 func (b *Endpoint) LookupStreams(ctx context.Context, collection string, isCollectionPrefix bool, tags map[string]*string, annotations map[string]*string, patchDB *BTrDB) (chan *Stream, chan error) {
 	ltags := []*pb.KeyOptValue{}
 	for k, v := range tags {
@@ -529,7 +484,7 @@ func (b *Endpoint) LookupStreams(ctx context.Context, collection string, isColle
 	return rvc, rve
 }
 
-//SQLQuery is a low level function, rather use BTrDB.SQLQuery()
+// SQLQuery is a low level function, rather use BTrDB.SQLQuery()
 func (b *Endpoint) SQLQuery(ctx context.Context, query string, params []string) (chan map[string]interface{}, chan error) {
 	rv, err := b.g.SQLQuery(ctx, &pb.SQLQueryParams{
 		Query:  query,
@@ -636,186 +591,7 @@ func (b *Endpoint) MultiRawValues(ctx context.Context, ids []uuid.UUID,
 	}()
 }
 
-//RawValues is a low level function, rather use Stream.RawValues()
-func (b *Endpoint) RawValues(ctx context.Context, uu uuid.UUID, start int64, end int64, version uint64) (chan RawPoint, chan uint64, chan error) {
-	rv, err := b.g.RawValues(ctx, &pb.RawValuesParams{
-		Uuid:         uu,
-		Start:        start,
-		End:          end,
-		VersionMajor: version,
-	})
-	rvc := make(chan RawPoint, 100)
-	rvv := make(chan uint64, 1)
-	rve := make(chan error, 1)
-	wroteVer := false
-	if err != nil {
-		close(rvv)
-		close(rvc)
-		rve <- err
-		close(rve)
-		return rvc, rvv, rve
-	}
-	go func() {
-		for {
-			rawv, err := rv.Recv()
-			if err == io.EOF {
-				close(rvc)
-				close(rvv)
-				close(rve)
-				return
-			}
-			if err != nil {
-				close(rvc)
-				close(rvv)
-				rve <- err
-				close(rve)
-				return
-			}
-			if rawv.Stat != nil {
-				close(rvc)
-				close(rvv)
-				rve <- &CodedError{rawv.Stat}
-				close(rve)
-				return
-			}
-			if !wroteVer {
-				rvv <- rawv.VersionMajor
-				wroteVer = true
-			}
-			for _, x := range rawv.Values {
-				rvc <- RawPoint{x.Time, x.Value}
-			}
-		}
-	}()
-	return rvc, rvv, rve
-}
-
-//AlignedWindows is a low level function, rather use Stream.AlignedWindows()
-func (b *Endpoint) AlignedWindows(ctx context.Context, uu uuid.UUID, start int64, end int64, pointwidth uint8, version uint64) (chan StatPoint, chan uint64, chan error) {
-	rv, err := b.g.AlignedWindows(ctx, &pb.AlignedWindowsParams{
-		Uuid:         uu,
-		Start:        start,
-		End:          end,
-		PointWidth:   uint32(pointwidth),
-		VersionMajor: version,
-	})
-	rvc := make(chan StatPoint, 100)
-	rvv := make(chan uint64, 1)
-	rve := make(chan error, 1)
-	wroteVer := false
-	if err != nil {
-		close(rvc)
-		close(rvv)
-		rve <- err
-		close(rve)
-		return rvc, rvv, rve
-	}
-	go func() {
-		for {
-			rawv, err := rv.Recv()
-			if err == io.EOF {
-				close(rvc)
-				close(rvv)
-				close(rve)
-				return
-			}
-			if err != nil {
-				close(rvc)
-				close(rvv)
-				rve <- err
-				close(rve)
-				return
-			}
-			if rawv.Stat != nil {
-				close(rvc)
-				close(rvv)
-				rve <- &CodedError{rawv.Stat}
-				close(rve)
-				return
-			}
-			if !wroteVer {
-				rvv <- rawv.VersionMajor
-				wroteVer = true
-			}
-			for _, x := range rawv.Values {
-				rvc <- StatPoint{
-					Time:   x.Time,
-					Min:    x.Min,
-					Mean:   x.Mean,
-					Max:    x.Max,
-					Count:  x.Count,
-					StdDev: x.Stddev,
-				}
-			}
-		}
-	}()
-	return rvc, rvv, rve
-}
-
-//Windows is a low level function, rather use Stream.Windows()
-func (b *Endpoint) Windows(ctx context.Context, uu uuid.UUID, start int64, end int64, width uint64, depth uint8, version uint64) (chan StatPoint, chan uint64, chan error) {
-	rv, err := b.g.Windows(ctx, &pb.WindowsParams{
-		Uuid:         uu,
-		Start:        start,
-		End:          end,
-		Width:        width,
-		Depth:        uint32(depth),
-		VersionMajor: version,
-	})
-	rvc := make(chan StatPoint, 100)
-	rvv := make(chan uint64, 1)
-	rve := make(chan error, 1)
-	wroteVer := false
-	if err != nil {
-		close(rvc)
-		close(rvv)
-		rve <- err
-		close(rve)
-		return rvc, rvv, rve
-	}
-	go func() {
-		for {
-			rawv, err := rv.Recv()
-			if err == io.EOF {
-				close(rvc)
-				close(rvv)
-				close(rve)
-				return
-			}
-			if err != nil {
-				close(rvc)
-				close(rvv)
-				rve <- err
-				close(rve)
-				return
-			}
-			if rawv.Stat != nil {
-				close(rvc)
-				close(rvv)
-				rve <- &CodedError{rawv.Stat}
-				close(rve)
-				return
-			}
-			if !wroteVer {
-				rvv <- rawv.VersionMajor
-				wroteVer = true
-			}
-			for _, x := range rawv.Values {
-				rvc <- StatPoint{
-					Time:   x.Time,
-					Min:    x.Min,
-					Mean:   x.Mean,
-					Max:    x.Max,
-					Count:  x.Count,
-					StdDev: x.Stddev,
-				}
-			}
-		}
-	}()
-	return rvc, rvv, rve
-}
-
-//DeleteRange is a low level function, rather use Stream.DeleteRange()
+// DeleteRange is a low level function, rather use Stream.DeleteRange()
 func (b *Endpoint) DeleteRange(ctx context.Context, uu uuid.UUID, start int64, end int64) (uint64, error) {
 	rv, err := b.g.Delete(ctx, &pb.DeleteParams{
 		Uuid:  uu,
@@ -831,7 +607,7 @@ func (b *Endpoint) DeleteRange(ctx context.Context, uu uuid.UUID, start int64, e
 	return rv.VersionMajor, nil
 }
 
-//Flush is a low level function, rather use Stream.Flush()
+// Flush is a low level function, rather use Stream.Flush()
 func (b *Endpoint) Flush(ctx context.Context, uu uuid.UUID) error {
 	rv, err := b.g.Flush(ctx, &pb.FlushParams{
 		Uuid: uu,
@@ -845,7 +621,7 @@ func (b *Endpoint) Flush(ctx context.Context, uu uuid.UUID) error {
 	return nil
 }
 
-//Obliterate is a low level function, rather use Stream.Obliterate()
+// Obliterate is a low level function, rather use Stream.Obliterate()
 func (b *Endpoint) Obliterate(ctx context.Context, uu uuid.UUID) error {
 	rv, err := b.g.Obliterate(ctx, &pb.ObliterateParams{
 		Uuid: uu,
@@ -859,7 +635,7 @@ func (b *Endpoint) Obliterate(ctx context.Context, uu uuid.UUID) error {
 	return nil
 }
 
-//Info is a low level function, rather use BTrDB.Info()
+// Info is a low level function, rather use BTrDB.Info()
 func (b *Endpoint) Info(ctx context.Context) (*MASH, *pb.InfoResponse, error) {
 	rv, err := b.g.Info(ctx, &pb.InfoParams{})
 	if err != nil {
@@ -875,7 +651,7 @@ func (b *Endpoint) Info(ctx context.Context) (*MASH, *pb.InfoResponse, error) {
 	return mrv, rv, nil
 }
 
-//Nearest is a low level function, rather use Stream.Nearest()
+// Nearest is a low level function, rather use Stream.Nearest()
 func (b *Endpoint) Nearest(ctx context.Context, uu uuid.UUID, time int64, version uint64, backward bool) (RawPoint, uint64, error) {
 	rv, err := b.g.Nearest(ctx, &pb.NearestParams{
 		Uuid:         uu,
@@ -910,7 +686,7 @@ type CompactionConfig struct {
 	TargetArchiveHorizon uint64
 }
 
-//SetCompactionConfig is a low level function, use Stream.SetCompactionConfig instead
+// SetCompactionConfig is a low level function, use Stream.SetCompactionConfig instead
 func (b *Endpoint) SetCompactionConfig(ctx context.Context, uu uuid.UUID, cfg *CompactionConfig) error {
 	rrz := make([]*pb.ReducedResolutionRange, len(cfg.ReducedResolutionRanges))
 	for i, r := range cfg.ReducedResolutionRanges {
@@ -935,7 +711,7 @@ func (b *Endpoint) SetCompactionConfig(ctx context.Context, uu uuid.UUID, cfg *C
 	return nil
 }
 
-//GetCompactionConfig is a low level function, use Stream.GetCompactionConfig instead
+// GetCompactionConfig is a low level function, use Stream.GetCompactionConfig instead
 func (b *Endpoint) GetCompactionConfig(ctx context.Context, uu uuid.UUID) (cfg *CompactionConfig, majVersion uint64, err error) {
 	rv, err := b.g.GetCompactionConfig(ctx, &pb.GetCompactionConfigParams{
 		Uuid: uu,
@@ -969,7 +745,7 @@ type ChangedRange struct {
 	End     int64
 }
 
-//Changes is a low level function, rather use BTrDB.Changes()
+// Changes is a low level function, rather use BTrDB.Changes()
 func (b *Endpoint) Changes(ctx context.Context, uu uuid.UUID, fromVersion uint64, toVersion uint64, resolution uint8) (chan ChangedRange, chan uint64, chan error) {
 	rv, err := b.g.Changes(ctx, &pb.ChangesParams{
 		Uuid:       uu,
@@ -1023,8 +799,8 @@ func (b *Endpoint) Changes(ctx context.Context, uu uuid.UUID, fromVersion uint64
 	return rvc, rvv, rve
 }
 
-//SubscribeTo is a low level function that forks a goroutine in the background and fills the provided channls.
-//It is assumed the caller has already ensured that this endpoint is responsible for the provided uuids.
+// SubscribeTo is a low level function that forks a goroutine in the background and fills the provided channls.
+// It is assumed the caller has already ensured that this endpoint is responsible for the provided uuids.
 func (b *Endpoint) SubscribeTo(ctx context.Context, uuid []uuid.UUID, c chan SubRecord, errc chan error) {
 	by := make([][]byte, len(uuid))
 	for i := range uuid {

@@ -12,6 +12,12 @@ service BTrDB {
        body: "*"
      };
   }
+  rpc ArrowRawValues(RawValuesParams) returns (stream ArrowRawValuesResponse) {
+  option (google.api.http) = {
+     post: "/v5/arrowrawvalues"
+       body: "*"
+     };
+  }
   rpc MultiRawValues(MultiRawValuesParams) returns (stream MultiRawValuesResponse) {
   option (google.api.http) = {
      post: "/v5/multirawvalues"
@@ -25,9 +31,21 @@ service BTrDB {
        body: "*"
      };
   }
+  rpc ArrowAlignedWindows(AlignedWindowsParams) returns (stream ArrowAlignedWindowsResponse) {
+  option (google.api.http) = {
+     post: "/v5/arrowalignedwindows"
+       body: "*"
+     };
+  }
   rpc Windows(WindowsParams) returns (stream WindowsResponse) {
   option (google.api.http) = {
      post: "/v5/windows"
+       body: "*"
+     };
+  }
+  rpc ArrowWindows(WindowsParams) returns (stream ArrowWindowsResponse) {
+  option (google.api.http) = {
+     post: "/v5/arrowwindows"
        body: "*"
      };
   }
@@ -82,6 +100,12 @@ service BTrDB {
   rpc Insert(InsertParams) returns (InsertResponse) {
   option (google.api.http) = {
      post: "/v5/insert"
+       body: "*"
+     };
+  }
+  rpc ArrowInsert(ArrowInsertParams) returns (InsertResponse) {
+  option (google.api.http) = {
+     post: "/v5/arrowinsert"
        body: "*"
      };
   }
@@ -171,6 +195,12 @@ message RawValuesResponse {
   uint64 versionMinor = 3;
   repeated RawPoint values = 4;
 }
+message ArrowRawValuesResponse {
+  Status stat = 1;
+  uint64 versionMajor = 2;
+  uint64 versionMinor = 3;
+  bytes arrowBytes = 4;
+}
 message MultiRawValuesParams {
   repeated bytes uuid = 1;
   sfixed64 start = 2;
@@ -201,6 +231,12 @@ message AlignedWindowsResponse {
   uint64 versionMinor = 3;
   repeated StatPoint values = 4;
 }
+message ArrowAlignedWindowsResponse {
+  Status stat = 1;
+  uint64 versionMajor = 2;
+  uint64 versionMinor = 3;
+  bytes arrowBytes = 4;
+}
 message WindowsParams {
   bytes uuid = 1;
   sfixed64 start = 2;
@@ -214,6 +250,12 @@ message WindowsResponse {
   uint64 versionMajor = 2;
   uint64 versionMinor = 3;
   repeated StatPoint values = 4;
+}
+message ArrowWindowsResponse {
+  Status stat = 1;
+  uint64 versionMajor = 2;
+  uint64 versionMinor = 3;
+  bytes arrowBytes = 4;
 }
 message StreamInfoParams {
   bytes uuid = 1;
@@ -335,6 +377,13 @@ message InsertParams {
   MergePolicy merge_policy = 4;
   RoundSpec rounding = 5;
   repeated RawPoint values = 3;
+}
+message ArrowInsertParams {
+  bytes uuid = 1;
+  bool sync = 2;
+  MergePolicy merge_policy = 3;
+  RoundSpec rounding = 4;
+  bytes arrowBytes = 5;
 }
 message InsertResponse {
   Status stat = 1;

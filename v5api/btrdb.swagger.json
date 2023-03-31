@@ -1,12 +1,13 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "v5api/btrdb.proto",
-    "version": "5.12.0"
+    "title": "btrdb.proto",
+    "version": "version not set"
   },
-  "schemes": [
-    "http",
-    "https"
+  "tags": [
+    {
+      "name": "BTrDB"
+    }
   ],
   "consumes": [
     "application/json"
@@ -17,12 +18,27 @@
   "paths": {
     "/v5/alignedwindows": {
       "post": {
-        "operationId": "AlignedWindows",
+        "operationId": "BTrDB_AlignedWindows",
         "responses": {
           "200": {
             "description": "A successful response.(streaming responses)",
             "schema": {
-              "$ref": "#/x-stream-definitions/v5apiAlignedWindowsResponse"
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v5apiAlignedWindowsResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/googlerpcStatus"
+                }
+              },
+              "title": "Stream result of v5apiAlignedWindowsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -41,14 +57,184 @@
         ]
       }
     },
-    "/v5/changes": {
+    "/v5/arrowalignedwindows": {
       "post": {
-        "operationId": "Changes",
+        "operationId": "BTrDB_ArrowAlignedWindows",
         "responses": {
           "200": {
             "description": "A successful response.(streaming responses)",
             "schema": {
-              "$ref": "#/x-stream-definitions/v5apiChangesResponse"
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v5apiArrowAlignedWindowsResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/googlerpcStatus"
+                }
+              },
+              "title": "Stream result of v5apiArrowAlignedWindowsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v5apiAlignedWindowsParams"
+            }
+          }
+        ],
+        "tags": [
+          "BTrDB"
+        ]
+      }
+    },
+    "/v5/arrowinsert": {
+      "post": {
+        "operationId": "BTrDB_ArrowInsert",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v5apiInsertResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v5apiArrowInsertParams"
+            }
+          }
+        ],
+        "tags": [
+          "BTrDB"
+        ]
+      }
+    },
+    "/v5/arrowrawvalues": {
+      "post": {
+        "operationId": "BTrDB_ArrowRawValues",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v5apiArrowRawValuesResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/googlerpcStatus"
+                }
+              },
+              "title": "Stream result of v5apiArrowRawValuesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v5apiRawValuesParams"
+            }
+          }
+        ],
+        "tags": [
+          "BTrDB"
+        ]
+      }
+    },
+    "/v5/arrowwindows": {
+      "post": {
+        "operationId": "BTrDB_ArrowWindows",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v5apiArrowWindowsResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/googlerpcStatus"
+                }
+              },
+              "title": "Stream result of v5apiArrowWindowsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v5apiWindowsParams"
+            }
+          }
+        ],
+        "tags": [
+          "BTrDB"
+        ]
+      }
+    },
+    "/v5/changes": {
+      "post": {
+        "operationId": "BTrDB_Changes",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v5apiChangesResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/googlerpcStatus"
+                }
+              },
+              "title": "Stream result of v5apiChangesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -69,12 +255,18 @@
     },
     "/v5/create": {
       "post": {
-        "operationId": "Create",
+        "operationId": "BTrDB_Create",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/v5apiCreateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -95,12 +287,18 @@
     },
     "/v5/delete": {
       "post": {
-        "operationId": "Delete",
+        "operationId": "BTrDB_Delete",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/v5apiDeleteResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -121,12 +319,18 @@
     },
     "/v5/faultinject": {
       "post": {
-        "operationId": "FaultInject",
+        "operationId": "BTrDB_FaultInject",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/v5apiFaultInjectResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -147,12 +351,18 @@
     },
     "/v5/flush": {
       "post": {
-        "operationId": "Flush",
+        "operationId": "BTrDB_Flush",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/v5apiFlushResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -173,12 +383,27 @@
     },
     "/v5/generatecsv": {
       "post": {
-        "operationId": "GenerateCSV",
+        "operationId": "BTrDB_GenerateCSV",
         "responses": {
           "200": {
             "description": "A successful response.(streaming responses)",
             "schema": {
-              "$ref": "#/x-stream-definitions/v5apiGenerateCSVResponse"
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v5apiGenerateCSVResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/googlerpcStatus"
+                }
+              },
+              "title": "Stream result of v5apiGenerateCSVResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -199,12 +424,18 @@
     },
     "/v5/getcompactionconfig": {
       "post": {
-        "operationId": "GetCompactionConfig",
+        "operationId": "BTrDB_GetCompactionConfig",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/v5apiGetCompactionConfigResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -225,12 +456,18 @@
     },
     "/v5/getmetadatausage": {
       "post": {
-        "operationId": "GetMetadataUsage",
+        "operationId": "BTrDB_GetMetadataUsage",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/v5apiMetadataUsageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -251,12 +488,18 @@
     },
     "/v5/info": {
       "post": {
-        "operationId": "Info",
+        "operationId": "BTrDB_Info",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/v5apiInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -277,12 +520,18 @@
     },
     "/v5/insert": {
       "post": {
-        "operationId": "Insert",
+        "operationId": "BTrDB_Insert",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/v5apiInsertResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -303,12 +552,27 @@
     },
     "/v5/listcollections": {
       "post": {
-        "operationId": "ListCollections",
+        "operationId": "BTrDB_ListCollections",
         "responses": {
           "200": {
             "description": "A successful response.(streaming responses)",
             "schema": {
-              "$ref": "#/x-stream-definitions/v5apiListCollectionsResponse"
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v5apiListCollectionsResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/googlerpcStatus"
+                }
+              },
+              "title": "Stream result of v5apiListCollectionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -329,12 +593,27 @@
     },
     "/v5/lookupstreams": {
       "post": {
-        "operationId": "LookupStreams",
+        "operationId": "BTrDB_LookupStreams",
         "responses": {
           "200": {
             "description": "A successful response.(streaming responses)",
             "schema": {
-              "$ref": "#/x-stream-definitions/v5apiLookupStreamsResponse"
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v5apiLookupStreamsResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/googlerpcStatus"
+                }
+              },
+              "title": "Stream result of v5apiLookupStreamsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -353,14 +632,61 @@
         ]
       }
     },
+    "/v5/multirawvalues": {
+      "post": {
+        "operationId": "BTrDB_MultiRawValues",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v5apiMultiRawValuesResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/googlerpcStatus"
+                }
+              },
+              "title": "Stream result of v5apiMultiRawValuesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v5apiMultiRawValuesParams"
+            }
+          }
+        ],
+        "tags": [
+          "BTrDB"
+        ]
+      }
+    },
     "/v5/nearest": {
       "post": {
-        "operationId": "Nearest",
+        "operationId": "BTrDB_Nearest",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/v5apiNearestResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -381,12 +707,18 @@
     },
     "/v5/obliterate": {
       "post": {
-        "operationId": "Obliterate",
+        "operationId": "BTrDB_Obliterate",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/v5apiObliterateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -407,12 +739,27 @@
     },
     "/v5/rawvalues": {
       "post": {
-        "operationId": "RawValues",
+        "operationId": "BTrDB_RawValues",
         "responses": {
           "200": {
             "description": "A successful response.(streaming responses)",
             "schema": {
-              "$ref": "#/x-stream-definitions/v5apiRawValuesResponse"
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v5apiRawValuesResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/googlerpcStatus"
+                }
+              },
+              "title": "Stream result of v5apiRawValuesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -433,12 +780,18 @@
     },
     "/v5/setcompactionconfig": {
       "post": {
-        "operationId": "SetCompactionConfig",
+        "operationId": "BTrDB_SetCompactionConfig",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/v5apiSetCompactionConfigResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -459,12 +812,18 @@
     },
     "/v5/setstreamannotations": {
       "post": {
-        "operationId": "SetStreamAnnotations",
+        "operationId": "BTrDB_SetStreamAnnotations",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/v5apiSetStreamAnnotationsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -485,12 +844,18 @@
     },
     "/v5/setstreamtags": {
       "post": {
-        "operationId": "SetStreamTags",
+        "operationId": "BTrDB_SetStreamTags",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/v5apiSetStreamTagsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -511,12 +876,27 @@
     },
     "/v5/sqlquery": {
       "post": {
-        "operationId": "SQLQuery",
+        "operationId": "BTrDB_SQLQuery",
         "responses": {
           "200": {
             "description": "A successful response.(streaming responses)",
             "schema": {
-              "$ref": "#/x-stream-definitions/v5apiSQLQueryResponse"
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v5apiSQLQueryResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/googlerpcStatus"
+                }
+              },
+              "title": "Stream result of v5apiSQLQueryResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -537,12 +917,18 @@
     },
     "/v5/streaminfo": {
       "post": {
-        "operationId": "StreamInfo",
+        "operationId": "BTrDB_StreamInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/v5apiStreamInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -561,14 +947,70 @@
         ]
       }
     },
-    "/v5/windows": {
+    "/v5/subscribe": {
       "post": {
-        "operationId": "Windows",
+        "operationId": "BTrDB_Subscribe",
         "responses": {
           "200": {
             "description": "A successful response.(streaming responses)",
             "schema": {
-              "$ref": "#/x-stream-definitions/v5apiWindowsResponse"
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v5apiSubscriptionResp"
+                },
+                "error": {
+                  "$ref": "#/definitions/googlerpcStatus"
+                }
+              },
+              "title": "Stream result of v5apiSubscriptionResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v5apiSubscriptionParams"
+            }
+          }
+        ],
+        "tags": [
+          "BTrDB"
+        ]
+      }
+    },
+    "/v5/windows": {
+      "post": {
+        "operationId": "BTrDB_Windows",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v5apiWindowsResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/googlerpcStatus"
+                }
+              },
+              "title": "Stream result of v5apiWindowsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -598,42 +1040,33 @@
       ],
       "default": "ALIGNED_WINDOWS_QUERY"
     },
-    "protobufAny": {
+    "googlerpcStatus": {
       "type": "object",
       "properties": {
-        "type_url": {
-          "type": "string"
-        },
-        "value": {
-          "type": "string",
-          "format": "byte"
-        }
-      }
-    },
-    "runtimeStreamError": {
-      "type": "object",
-      "properties": {
-        "grpc_code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "http_code": {
+        "code": {
           "type": "integer",
           "format": "int32"
         },
         "message": {
           "type": "string"
         },
-        "http_status": {
-          "type": "string"
-        },
         "details": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }
       }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
     },
     "v5apiAlignedWindowsParams": {
       "type": "object",
@@ -677,8 +1110,91 @@
         "values": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiStatPoint"
           }
+        }
+      }
+    },
+    "v5apiArrowAlignedWindowsResponse": {
+      "type": "object",
+      "properties": {
+        "stat": {
+          "$ref": "#/definitions/v5apiStatus"
+        },
+        "versionMajor": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "versionMinor": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "arrowBytes": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "v5apiArrowInsertParams": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "byte"
+        },
+        "sync": {
+          "type": "boolean"
+        },
+        "mergePolicy": {
+          "$ref": "#/definitions/v5apiMergePolicy"
+        },
+        "rounding": {
+          "$ref": "#/definitions/v5apiRoundSpec"
+        },
+        "arrowBytes": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "v5apiArrowRawValuesResponse": {
+      "type": "object",
+      "properties": {
+        "stat": {
+          "$ref": "#/definitions/v5apiStatus"
+        },
+        "versionMajor": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "versionMinor": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "arrowBytes": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "v5apiArrowWindowsResponse": {
+      "type": "object",
+      "properties": {
+        "stat": {
+          "$ref": "#/definitions/v5apiStatus"
+        },
+        "versionMajor": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "versionMinor": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "arrowBytes": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },
@@ -733,6 +1249,7 @@
         "ranges": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiChangedRange"
           }
         }
@@ -751,12 +1268,14 @@
         "tags": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiKeyOptValue"
           }
         },
         "annotations": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiKeyOptValue"
           }
         }
@@ -876,12 +1395,12 @@
           "format": "int64"
         },
         "includeVersions": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "streams": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiStreamCSVConfig"
           }
         }
@@ -894,8 +1413,7 @@
           "$ref": "#/definitions/v5apiStatus"
         },
         "isHeader": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "row": {
           "type": "array",
@@ -934,6 +1452,7 @@
         "reducedResolutionRanges": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiReducedResolutionRange"
           },
           "description": "For every timestamp \u003e= Start and \u003c End in this list,\nwe cannot traverse the tree \u003c Resolution."
@@ -981,15 +1500,18 @@
           "format": "byte"
         },
         "sync": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
-        "merge_policy": {
+        "mergePolicy": {
           "$ref": "#/definitions/v5apiMergePolicy"
+        },
+        "rounding": {
+          "$ref": "#/definitions/v5apiRoundSpec"
         },
         "values": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiRawPoint"
           }
         }
@@ -1066,18 +1588,19 @@
           "type": "string"
         },
         "isCollectionPrefix": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "tags": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiKeyOptValue"
           }
         },
         "annotations": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiKeyOptValue"
           }
         },
@@ -1095,6 +1618,7 @@
         "results": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiStreamDescriptor"
           }
         }
@@ -1119,8 +1643,7 @@
           "format": "int64"
         },
         "healthy": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "unmapped": {
           "type": "number",
@@ -1129,6 +1652,7 @@
         "members": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiMember"
           }
         }
@@ -1145,16 +1669,13 @@
           "type": "string"
         },
         "up": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "in": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "enabled": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "start": {
           "type": "string",
@@ -1188,7 +1709,8 @@
         "RETAIN",
         "REPLACE"
       ],
-      "default": "NEVER"
+      "default": "NEVER",
+      "title": "- NEVER: Never merge\n - EQUAL: Merge identical (key, value) pairs\n - RETAIN: When timestamps are equal, keep old value\n - REPLACE: When timestamps are equal, keep new value"
     },
     "v5apiMetadataUsageParams": {
       "type": "object",
@@ -1210,13 +1732,72 @@
         "tags": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiKeyCount"
           }
         },
         "annotations": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiKeyCount"
+          }
+        }
+      }
+    },
+    "v5apiMultiRawValuesParams": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "start": {
+          "type": "string",
+          "format": "int64"
+        },
+        "end": {
+          "type": "string",
+          "format": "int64"
+        },
+        "versionMajor": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "periodNs": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v5apiMultiRawValuesResponse": {
+      "type": "object",
+      "properties": {
+        "stat": {
+          "$ref": "#/definitions/v5apiStatus"
+        },
+        "versionMajor": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uint64"
+          }
+        },
+        "versionMinor": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uint64"
+          }
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v5apiRawPointVec"
           }
         }
       }
@@ -1237,8 +1818,7 @@
           "format": "uint64"
         },
         "backward": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         }
       }
     },
@@ -1310,6 +1890,22 @@
         }
       }
     },
+    "v5apiRawPointVec": {
+      "type": "object",
+      "properties": {
+        "time": {
+          "type": "string",
+          "format": "int64"
+        },
+        "value": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      }
+    },
     "v5apiRawValuesParams": {
       "type": "object",
       "properties": {
@@ -1348,6 +1944,7 @@
         "values": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiRawPoint"
           }
         }
@@ -1375,6 +1972,16 @@
       "properties": {
         "name": {
           "type": "string"
+        }
+      }
+    },
+    "v5apiRoundSpec": {
+      "type": "object",
+      "properties": {
+        "bits": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Round to a bit boundary"
         }
       }
     },
@@ -1426,6 +2033,7 @@
         "reducedResolutionRanges": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiReducedResolutionRange"
           },
           "title": "For every timestamp \u003e= Start and \u003c End in this list,\nwe cannot traverse the tree \u003c Resolution.\nThese ranges are the new ones you want to add, not the full list"
@@ -1459,6 +2067,7 @@
         "changes": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiKeyOptValue"
           }
         },
@@ -1492,6 +2101,7 @@
         "tags": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiKeyOptValue"
           }
         },
@@ -1587,12 +2197,14 @@
         "tags": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiKeyOptValue"
           }
         },
         "annotations": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiKeyOptValue"
           }
         },
@@ -1610,12 +2222,10 @@
           "format": "byte"
         },
         "omitVersion": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "omitDescriptor": {
-          "type": "boolean",
-          "format": "boolean"
+          "type": "boolean"
         },
         "role": {
           "$ref": "#/definitions/v5apiRole"
@@ -1638,6 +2248,37 @@
         },
         "descriptor": {
           "$ref": "#/definitions/v5apiStreamDescriptor"
+        }
+      }
+    },
+    "v5apiSubscriptionParams": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
+        }
+      }
+    },
+    "v5apiSubscriptionResp": {
+      "type": "object",
+      "properties": {
+        "stat": {
+          "$ref": "#/definitions/v5apiStatus"
+        },
+        "uuid": {
+          "type": "string",
+          "format": "byte"
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v5apiRawPoint"
+          }
         }
       }
     },
@@ -1687,108 +2328,11 @@
         "values": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v5apiStatPoint"
           }
         }
       }
-    }
-  },
-  "x-stream-definitions": {
-    "v5apiAlignedWindowsResponse": {
-      "type": "object",
-      "properties": {
-        "result": {
-          "$ref": "#/definitions/v5apiAlignedWindowsResponse"
-        },
-        "error": {
-          "$ref": "#/definitions/runtimeStreamError"
-        }
-      },
-      "title": "Stream result of v5apiAlignedWindowsResponse"
-    },
-    "v5apiChangesResponse": {
-      "type": "object",
-      "properties": {
-        "result": {
-          "$ref": "#/definitions/v5apiChangesResponse"
-        },
-        "error": {
-          "$ref": "#/definitions/runtimeStreamError"
-        }
-      },
-      "title": "Stream result of v5apiChangesResponse"
-    },
-    "v5apiGenerateCSVResponse": {
-      "type": "object",
-      "properties": {
-        "result": {
-          "$ref": "#/definitions/v5apiGenerateCSVResponse"
-        },
-        "error": {
-          "$ref": "#/definitions/runtimeStreamError"
-        }
-      },
-      "title": "Stream result of v5apiGenerateCSVResponse"
-    },
-    "v5apiListCollectionsResponse": {
-      "type": "object",
-      "properties": {
-        "result": {
-          "$ref": "#/definitions/v5apiListCollectionsResponse"
-        },
-        "error": {
-          "$ref": "#/definitions/runtimeStreamError"
-        }
-      },
-      "title": "Stream result of v5apiListCollectionsResponse"
-    },
-    "v5apiLookupStreamsResponse": {
-      "type": "object",
-      "properties": {
-        "result": {
-          "$ref": "#/definitions/v5apiLookupStreamsResponse"
-        },
-        "error": {
-          "$ref": "#/definitions/runtimeStreamError"
-        }
-      },
-      "title": "Stream result of v5apiLookupStreamsResponse"
-    },
-    "v5apiRawValuesResponse": {
-      "type": "object",
-      "properties": {
-        "result": {
-          "$ref": "#/definitions/v5apiRawValuesResponse"
-        },
-        "error": {
-          "$ref": "#/definitions/runtimeStreamError"
-        }
-      },
-      "title": "Stream result of v5apiRawValuesResponse"
-    },
-    "v5apiSQLQueryResponse": {
-      "type": "object",
-      "properties": {
-        "result": {
-          "$ref": "#/definitions/v5apiSQLQueryResponse"
-        },
-        "error": {
-          "$ref": "#/definitions/runtimeStreamError"
-        }
-      },
-      "title": "Stream result of v5apiSQLQueryResponse"
-    },
-    "v5apiWindowsResponse": {
-      "type": "object",
-      "properties": {
-        "result": {
-          "$ref": "#/definitions/v5apiWindowsResponse"
-        },
-        "error": {
-          "$ref": "#/definitions/runtimeStreamError"
-        }
-      },
-      "title": "Stream result of v5apiWindowsResponse"
     }
   }
 }

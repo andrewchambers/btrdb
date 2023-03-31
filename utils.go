@@ -8,23 +8,23 @@ import (
 	pb "github.com/BTrDB/btrdb/v5/v5api"
 )
 
-//M is an alias to neaten code specifying tags:
+// M is an alias to neaten code specifying tags:
 // btrdb.LookupStream(ctx, "mycollection", btrdb.M{"tagkey":"tagval"})
 type M map[string]string
 
-//CodedError is an error that contains a numeric code. Most errors returned by
-//this package are actually *CodedError objects. Use ToCodedError()
+// CodedError is an error that contains a numeric code. Most errors returned by
+// this package are actually *CodedError objects. Use ToCodedError()
 type CodedError struct {
 	*pb.Status
 }
 
-//Error() implements the error interface
+// Error() implements the error interface
 func (ce *CodedError) Error() string {
 	return fmt.Sprintf("[%d] %s", ce.Code, ce.Msg)
 }
 
-//ToCodedError can be used to convert any error into a CodedError. If the
-//error object is actually not coded, it will receive code 501.
+// ToCodedError can be used to convert any error into a CodedError. If the
+// error object is actually not coded, it will receive code 501.
 func ToCodedError(e error) *CodedError {
 	if e == nil {
 		return nil
@@ -36,13 +36,13 @@ func ToCodedError(e error) *CodedError {
 	}
 }
 
-//LatestVersion can be passed to any functions taking a version to use the
-//latest version of that stream
+// LatestVersion can be passed to any functions taking a version to use the
+// latest version of that stream
 const LatestVersion = 0
 
-//EndpointsFromEnv reads the environment variable BTRDB_ENDPOINTS of the format
+// EndpointsFromEnv reads the environment variable BTRDB_ENDPOINTS of the format
 // server:port,server:port,server:port
-//and returns it as a string slice. This function is typically used as
+// and returns it as a string slice. This function is typically used as
 // btrdb.Connect(btrdb.EndpointsFromEnv()...)
 func EndpointsFromEnv() []string {
 	endpoints := os.Getenv("BTRDB_ENDPOINTS")
